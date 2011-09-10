@@ -740,7 +740,7 @@ QUnit.load = function() {
 
 		var label = document.createElement("label");
 		label.setAttribute("for", "qunit-filter-pass");
-		label.innerHTML = "影藏已通过的测试";
+		label.innerHTML = "隐藏已通过的测试";
 		toolbar.appendChild( label );
 	}
 
@@ -774,16 +774,17 @@ function done() {
 		runtime = +new Date - config.started,
 		passed = config.stats.all - config.stats.bad,
 		html = [
-			'测试用例在 ',
+			'测试用例编译使用 ',
 			runtime,
-			' 毫秒内编译完成<br/>',
-			'<span class="passed"> 已通过 ',
-			passed,
-			'</span> / <span class="total">',
+			' 毫秒<br/>',
+			'共 <span class="total">'
 			config.stats.all,
-			'</span> 个测试, 其中 <span class="failed">',
+			'</span> 个测试, ',
+			'已通过 <span class="passed">',
+			passed,
+			'</span> 个, 未通过 <span class="failed">',
 			config.stats.bad,
-			'</span> 个失败。'
+			'</span> 个。'
 		].join('');
 
 	if ( banner ) {
