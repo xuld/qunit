@@ -168,7 +168,7 @@ Test.prototype = {
 			b.innerHTML = this.name + " <b class='counts'>(<b class='failed'>" + bad + "</b>, <b class='passed'>" + good + "</b>, " + this.assertions.length + ")</b>";
 
 			var a = document.createElement("a");
-			a.innerHTML = "Rerun";
+			a.innerHTML = "重新测试";
 			a.href = QUnit.url({ filter: getText([b]).replace(/\([^)]+\)$/, "").replace(/(^\s*|\s*$)/g, "") });
 
 			addEvent(b, "click", function() {
@@ -740,7 +740,7 @@ QUnit.load = function() {
 
 		var label = document.createElement("label");
 		label.setAttribute("for", "qunit-filter-pass");
-		label.innerHTML = "Hide passed tests";
+		label.innerHTML = "影藏已通过的测试";
 		toolbar.appendChild( label );
 	}
 
@@ -774,16 +774,16 @@ function done() {
 		runtime = +new Date - config.started,
 		passed = config.stats.all - config.stats.bad,
 		html = [
-			'Tests completed in ',
+			'测试用例在 ',
 			runtime,
-			' milliseconds.<br/>',
-			'<span class="passed">',
+			' 毫秒内编译完成<br/>',
+			'<span class="passed"> 已通过 ',
 			passed,
-			'</span> tests of <span class="total">',
+			'</span> / <span class="total">',
 			config.stats.all,
-			'</span> passed, <span class="failed">',
+			'</span> 个测试, 其中 <span class="failed">',
 			config.stats.bad,
-			'</span> failed.'
+			'</span> 个失败。'
 		].join('');
 
 	if ( banner ) {
