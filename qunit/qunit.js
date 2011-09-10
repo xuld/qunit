@@ -37,7 +37,7 @@ Test.prototype = {
 		var tests = id("qunit-tests");
 		if (tests) {
 			var b = document.createElement("strong");
-				b.innerHTML = "Running " + this.name;
+				b.innerHTML = "正在运行 " + this.name;
 			var li = document.createElement("li");
 				li.appendChild( b );
 				li.className = "running";
@@ -86,7 +86,7 @@ Test.prototype = {
 
 			this.testEnvironment.setup.call(this.testEnvironment);
 		} catch(e) {
-			QUnit.ok( false, "Setup failed on " + this.testName + ": " + e.message );
+			QUnit.ok( false, "初始化 " + this.testName + " 失败: " + e.message );
 		}
 	},
 	run: function() {
@@ -101,8 +101,8 @@ Test.prototype = {
 		try {
 			this.callback.call(this.testEnvironment);
 		} catch(e) {
-			fail("Test " + this.testName + " died, exception and test follows", e, this.callback);
-			QUnit.ok( false, "Died on test #" + (this.assertions.length + 1) + ": " + e.message + " - " + QUnit.jsDump.parse(e) );
+			fail("测试 " + this.testName + " 抛出异常, 忽略并继续...", e, this.callback);
+			QUnit.ok( false, "该异常由确认 #" + (this.assertions.length + 1) + " 抛出: " + e.message + " - " + QUnit.jsDump.parse(e) );
 			// else next test will carry the responsibility
 			saveGlobal();
 
@@ -117,12 +117,12 @@ Test.prototype = {
 			this.testEnvironment.teardown.call(this.testEnvironment);
 			checkPollution();
 		} catch(e) {
-			QUnit.ok( false, "Teardown failed on " + this.testName + ": " + e.message );
+			QUnit.ok( false, "清除测试 " + this.testName + " 失败: " + e.message );
 		}
 	},
 	finish: function() {
 		if ( this.expected && this.expected != this.assertions.length ) {
-			QUnit.ok( false, "Expected " + this.expected + " assertions, but " + this.assertions.length + " were run" );
+			QUnit.ok( false, "应该有 " + this.expected + " 个确认, 但只有 " + this.assertions.length + " 个被成功执行。" );
 		}
 
 		var good = 0, bad = 0,
@@ -139,7 +139,7 @@ Test.prototype = {
 
 				var li = document.createElement("li");
 				li.className = assertion.result ? "pass" : "fail";
-				li.innerHTML = assertion.message || (assertion.result ? "okay" : "failed");
+				li.innerHTML = assertion.message || (assertion.result ? "通过" : "未通过");
 				ol.appendChild( li );
 
 				if ( assertion.result ) {
@@ -423,7 +423,7 @@ var QUnit = {
 		if ( timeout && defined.setTimeout ) {
 			clearTimeout(config.timeout);
 			config.timeout = window.setTimeout(function() {
-				QUnit.ok( false, "Test timed out" );
+				QUnit.ok( false, "超时" );
 				QUnit.start();
 			}, timeout);
 		}
@@ -453,7 +453,7 @@ var config = {
 	// by default, modify document.title when suite is done
 	altertitle: true,
 
-	urlConfig: ['noglobals', 'notrycatch']
+	urlConfig: ['禁用全局对象', '允许未处理的异常']
 };
 
 // Load paramaters
@@ -531,7 +531,7 @@ extend(QUnit, {
 			result.id = "qunit-testresult";
 			result.className = "result";
 			tests.parentNode.insertBefore( result, tests );
-			result.innerHTML = 'Running...<br/>&nbsp;';
+			result.innerHTML = '正在运行...<br/>&nbsp;';
 		}
 	},
 
@@ -618,20 +618,20 @@ extend(QUnit, {
 			expected: expected
 		};
 
-		message = escapeHtml(message) || (result ? "okay" : "failed");
+		message = escapeHtml(message) || (result ? "通过" : "未通过");
 		message = '<span class="test-message">' + message + "</span>";
 		expected = escapeHtml(QUnit.jsDump.parse(expected));
 		actual = escapeHtml(QUnit.jsDump.parse(actual));
-		var output = message + '<table><tr class="test-expected"><th>Expected: </th><td><pre>' + expected + '</pre></td></tr>';
+		var output = message + '<table><tr class="test-expected"><th>应该返回: </th><td><pre>' + expected + '</pre></td></tr>';
 		if (actual != expected) {
-			output += '<tr class="test-actual"><th>Result: </th><td><pre>' + actual + '</pre></td></tr>';
-			output += '<tr class="test-diff"><th>Diff: </th><td><pre>' + QUnit.diff(expected, actual) +'</pre></td></tr>';
+			output += '<tr class="test-actual"><th>实际返回: </th><td><pre>' + actual + '</pre></td></tr>';
+			output += '<tr class="test-diff"><th>比较: </th><td><pre>' + QUnit.diff(expected, actual) +'</pre></td></tr>';
 		}
 		if (!result) {
 			var source = sourceFromStacktrace();
 			if (source) {
 				details.source = source;
-				output += '<tr class="test-source"><th>Source: </th><td><pre>' + escapeHtml(source) + '</pre></td></tr>';
+				output += '<tr class="test-source"><th>源代码: </th><td><pre>' + escapeHtml(source) + '</pre></td></tr>';
 			}
 		}
 		output += "</table>";
@@ -776,10 +776,10 @@ function done() {
 		html = [
 			'测试用例编译使用 ',
 			runtime,
-			' 毫秒<br/>',
-			'共 <span class="total">'
+			' 毫秒;<br/>',
+			'共 <span class="total">',
 			config.stats.all,
-			'</span> 个测试, ',
+			'</span> 个测试',
 			'已通过 <span class="passed">',
 			passed,
 			'</span> 个, 未通过 <span class="failed">',
@@ -864,8 +864,12 @@ function escapeHtml(s) {
 	return s.replace(/[\&"<>\\]/g, function(s) {
 		switch(s) {
 			case "&": return "&amp;";
-			case "\\": return "\\\\";
-			case '"': return '\"';
+			
+			//   xuld: we are escaping HTML, ranther than Javascript   .
+			
+			//case "\\": return "\\\\";
+			//case '"': return '\"';
+			case '"': return '&quot;';
 			case "<": return "&lt;";
 			case ">": return "&gt;";
 			default: return s;
@@ -1191,13 +1195,13 @@ QUnit.jsDump = (function() {
 	var reName = /^function (\w+)/;
 
 	var jsDump = {
-		parse:function( obj, type, stack ) { //type is used mostly internally, you can fix a (custom)type in advance
+		parse:function( obj, type, stack ) { //type is used zostly internally, you can fix a (custom)type in advance
 			stack = stack || [ ];
 			var parser = this.parsers[ type || this.typeOf(obj) ];
 			type = typeof parser;
 			var inStack = inArray(obj, stack);
 			if (inStack != -1) {
-				return 'recursion('+(inStack - stack.length)+')';
+				return '递归执行 ('+(inStack - stack.length)+')';
 			}
 			//else
 			if (type == 'function')  {
@@ -1264,8 +1268,8 @@ QUnit.jsDump = (function() {
 		parsers:{
 			window: '[Window]',
 			document: '[Document]',
-			error:'[ERROR]', //when no parser is found, shouldn't happen
-			unknown: '[Unknown]',
+			error:'[错误]', //when no parser is found, shouldn't happen
+			unknown: '[未知]',
 			'null':'null',
 			'undefined':'undefined',
 			'function':function( fn ) {
