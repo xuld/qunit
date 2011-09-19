@@ -102,7 +102,7 @@ Test.prototype = {
 			this.callback.call(this.testEnvironment);
 		} catch(e) {
 			fail("测试 " + this.testName + " 抛出异常, 忽略并继续...", e, this.callback);
-			QUnit.ok( false, "该异常由确认 #" + (this.assertions.length + 1) + " 抛出: " + e.message + " - " + QUnit.jsDump.parse(e) );
+			QUnit.ok( false, "测试 #" + (this.assertions.length + 1) + " 抛出异常: " + e.message + " - " + QUnit.jsDump.parse(e) );
 			// else next test will carry the responsibility
 			saveGlobal();
 
@@ -165,7 +165,7 @@ Test.prototype = {
 			}
 
 			var b = document.createElement("strong");
-			b.innerHTML = this.name + " <b class='counts'>(<b class='failed'>" + bad + "</b>, <b class='passed'>" + good + "</b>, " + this.assertions.length + ")</b>";
+			b.innerHTML = this.name + " <b class='counts'>(未通过 <b class='failed'>" + bad + "</b>, 通过 <b class='passed'>" + good + "</b>, 共" + this.assertions.length + ")</b>";
 
 			var a = document.createElement("a");
 			a.innerHTML = "重新测试";
@@ -453,7 +453,7 @@ var config = {
 	// by default, modify document.title when suite is done
 	altertitle: true,
 
-	urlConfig: ['禁用全局对象', '允许未处理的异常']
+	urlConfig: ['禁用全局对象', '不拦截异常']
 };
 
 // Load paramaters
@@ -774,7 +774,7 @@ function done() {
 		runtime = +new Date - config.started,
 		passed = config.stats.all - config.stats.bad,
 		html = [
-			'测试用例编译使用 ',
+			'测试使用 ',
 			runtime,
 			' 毫秒;<br/>',
 			'共 <span class="total">',
